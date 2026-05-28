@@ -1,454 +1,586 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>Modern Chess AI</title>
+<title>Arknights Full Operator Database</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:'Poppins',sans-serif;
-    }
+<style>
 
-    body{
-      background:
-      radial-gradient(circle at top left,#1e3a8a,#020617 60%);
-      min-height:100vh;
-      color:white;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:20px;
-    }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
-    .container{
-      width:100%;
-      max-width:1200px;
-      display:grid;
-      grid-template-columns: 1fr 350px;
-      gap:25px;
-    }
+body{
+  background:
+  radial-gradient(circle at top,#1e293b,#020617 75%);
+  color:white;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-    .board-box{
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:28px;
-      padding:20px;
-      backdrop-filter:blur(15px);
-      box-shadow:0 15px 40px rgba(0,0,0,0.4);
-    }
+header{
+  padding:35px 20px;
+  text-align:center;
+}
 
-    .title{
-      font-size:34px;
-      font-weight:700;
-      margin-bottom:20px;
-      background:linear-gradient(90deg,#60a5fa,#818cf8);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
+.title{
+  font-size:42px;
+  font-weight:700;
+  background:
+  linear-gradient(90deg,#60a5fa,#a855f7);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
-    #board{
-      width:100%;
-      max-width:720px;
-      margin:auto;
-    }
+.sub{
+  margin-top:10px;
+  opacity:0.7;
+}
 
-    .side{
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:28px;
-      padding:25px;
-      backdrop-filter:blur(15px);
-      box-shadow:0 15px 40px rgba(0,0,0,0.4);
-      height:fit-content;
-    }
+.controls{
+  width:100%;
+  max-width:1400px;
+  margin:auto;
+  display:flex;
+  gap:15px;
+  padding:20px;
+  flex-wrap:wrap;
+}
 
-    .status{
-      font-size:18px;
-      font-weight:600;
-      margin-bottom:20px;
-      line-height:1.6;
-    }
+.search-box{
+  flex:1;
+  min-width:250px;
+}
 
-    .btn{
-      width:100%;
-      padding:15px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(135deg,#2563eb,#7c3aed);
-      color:white;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.3s;
-      margin-bottom:15px;
-    }
+.search-box input{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:18px;
+  outline:none;
+  background:rgba(255,255,255,0.06);
+  color:white;
+  font-size:15px;
+  border:1px solid rgba(255,255,255,0.08);
+}
 
-    .btn:hover{
-      transform:translateY(-3px);
-      box-shadow:0 10px 25px rgba(37,99,235,0.4);
-    }
+.filter{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-    .info{
-      opacity:0.8;
-      font-size:14px;
-      line-height:1.8;
-    }
+.filter button{
+  padding:14px 18px;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  background:rgba(255,255,255,0.06);
+  color:white;
+  font-weight:600;
+  transition:0.25s;
+}
 
-    .move-list{
-      margin-top:20px;
-      background:rgba(255,255,255,0.04);
-      border-radius:18px;
-      padding:15px;
-      max-height:300px;
-      overflow-y:auto;
-    }
+.filter button:hover{
+  background:#2563eb;
+  transform:translateY(-2px);
+}
 
-    .move{
-      padding:8px 10px;
-      border-bottom:1px solid rgba(255,255,255,0.06);
-      font-size:14px;
-    }
+.filter button.active{
+  background:
+  linear-gradient(135deg,#2563eb,#7c3aed);
+}
 
-    @media(max-width:980px){
+.grid{
+  width:100%;
+  max-width:1500px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:
+  repeat(auto-fit,minmax(260px,1fr));
+  gap:24px;
+  padding:20px;
+}
 
-      .container{
-        grid-template-columns:1fr;
-      }
+.card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px;
+  overflow:hidden;
+  transition:0.3s;
+  backdrop-filter:blur(10px);
+}
 
-      .side{
-        order:-1;
-      }
+.card:hover{
+  transform:translateY(-8px);
+  box-shadow:
+  0 18px 35px rgba(0,0,0,0.45);
+}
 
-    }
-  </style>
+.card img{
+  width:100%;
+  height:340px;
+  object-fit:cover;
+}
 
-  <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard-1.0.0.min.css"/>
+.content{
+  padding:18px;
+}
 
+.name{
+  font-size:22px;
+  font-weight:700;
+}
+
+.role{
+  margin-top:6px;
+  opacity:0.75;
+}
+
+.rarity{
+  margin-top:14px;
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:12px;
+  background:
+  linear-gradient(135deg,#f59e0b,#ef4444);
+  font-size:13px;
+  font-weight:600;
+}
+
+footer{
+  text-align:center;
+  padding:40px 20px;
+  opacity:0.7;
+}
+
+@media(max-width:700px){
+
+  .title{
+    font-size:32px;
+  }
+
+  .card img{
+    height:300px;
+  }
+
+}
+
+</style>
 </head>
 <body>
 
-<div class="container">
+<header>
 
-  <div class="board-box">
-
-    <div class="title">
-      CHESS AI
-    </div>
-
-    <div id="board"></div>
-
+  <div class="title">
+    ARKNIGHTS DATABASE
   </div>
 
-  <div class="side">
+  <div class="sub">
+    Full Operator List ★1 - ★6
+  </div>
 
-    <div class="status" id="status">
-      Status: Giliran Putih
-    </div>
+</header>
 
-    <button class="btn" onclick="resetGame()">
-      Restart Game
+<div class="controls">
+
+  <div class="search-box">
+    <input
+      type="text"
+      id="search"
+      placeholder="Cari operator..."
+    >
+  </div>
+
+  <div class="filter">
+
+    <button class="active"
+    onclick="filterRarity('all',this)">
+      Semua
     </button>
 
-    <button class="btn" onclick="undoMove()">
-      Undo Move
+    <button onclick="filterRarity('6',this)">
+      ★★★★★★
     </button>
 
-    <div class="info">
-      ♟ Lawan bermain menggunakan AI computer.<br><br>
-      ♟ Kamu bermain sebagai putih.<br><br>
-      ♟ Klik lalu pindahkan bidak untuk bermain.
-    </div>
+    <button onclick="filterRarity('5',this)">
+      ★★★★★
+    </button>
 
-    <div class="move-list" id="moveList"></div>
+    <button onclick="filterRarity('4',this)">
+      ★★★★
+    </button>
+
+    <button onclick="filterRarity('3',this)">
+      ★★★
+    </button>
+
+    <button onclick="filterRarity('2',this)">
+      ★★
+    </button>
+
+    <button onclick="filterRarity('1',this)">
+      ★
+    </button>
 
   </div>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<div class="grid" id="grid"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard.js/1.0.0/chessboard-1.0.0.min.js"></script>
+<footer>
+  Arknights Full Character Database
+</footer>
 
 <script>
 
-  const game = new Chess();
-
-  let board;
-
-  const moveList = document.getElementById("moveList");
-  const statusDiv = document.getElementById("status");
-
-  function updateStatus(){
-
-    let status = "";
-
-    if(game.in_checkmate()){
-
-      status = "Checkmate!";
-
-    }else if(game.in_draw()){
-
-      status = "Draw!";
-
-    }else{
-
-      status =
-      game.turn() === 'w'
-      ? "Giliran Putih"
-      : "Computer berpikir...";
-
-      if(game.in_check()){
-
-        status += " — CHECK!";
-      }
-    }
-
-    statusDiv.innerHTML = "Status: " + status;
-
-    updateMoveHistory();
-  }
-
-  function updateMoveHistory(){
-
-    const history = game.history();
-
-    moveList.innerHTML = "";
-
-    history.forEach((move,index)=>{
-
-      const div = document.createElement("div");
-
-      div.className = "move";
-
-      div.innerHTML =
-      `${index + 1}. ${move}`;
-
-      moveList.appendChild(div);
-
-    });
-
-    moveList.scrollTop = moveList.scrollHeight;
-  }
-
-  function minimaxRoot(depth, game, isMaximisingPlayer){
-
-    const newGameMoves = game.moves();
-
-    let bestMove = -9999;
-    let bestMoveFound;
-
-    for(let i = 0; i < newGameMoves.length; i++){
-
-      const newGameMove = newGameMoves[i];
-
-      game.move(newGameMove);
-
-      const value =
-      minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
-
-      game.undo();
-
-      if(value >= bestMove){
-
-        bestMove = value;
-        bestMoveFound = newGameMove;
-      }
-    }
-
-    return bestMoveFound;
-  }
-
-  function minimax(depth, game, alpha, beta, isMaximisingPlayer){
-
-    if(depth === 0){
-
-      return -evaluateBoard(game.board());
-    }
-
-    const newGameMoves = game.moves();
-
-    if(isMaximisingPlayer){
-
-      let bestMove = -9999;
-
-      for(let i = 0; i < newGameMoves.length; i++){
-
-        game.move(newGameMoves[i]);
-
-        bestMove = Math.max(
-          bestMove,
-          minimax(depth - 1, game, alpha, beta, false)
-        );
-
-        game.undo();
-
-        alpha = Math.max(alpha, bestMove);
-
-        if(beta <= alpha){
-
-          return bestMove;
-        }
-      }
-
-      return bestMove;
-
-    }else{
-
-      let bestMove = 9999;
-
-      for(let i = 0; i < newGameMoves.length; i++){
-
-        game.move(newGameMoves[i]);
-
-        bestMove = Math.min(
-          bestMove,
-          minimax(depth - 1, game, alpha, beta, true)
-        );
-
-        game.undo();
-
-        beta = Math.min(beta, bestMove);
-
-        if(beta <= alpha){
-
-          return bestMove;
-        }
-      }
-
-      return bestMove;
-    }
-  }
-
-  function evaluateBoard(board){
-
-    let totalEvaluation = 0;
-
-    for(let i = 0; i < 8; i++){
-
-      for(let j = 0; j < 8; j++){
-
-        totalEvaluation =
-        totalEvaluation +
-        getPieceValue(board[i][j]);
-      }
-    }
-
-    return totalEvaluation;
-  }
-
-  function getPieceValue(piece){
-
-    if(piece === null){
-
-      return 0;
-    }
-
-    const values = {
-      p:10,
-      n:30,
-      b:30,
-      r:50,
-      q:90,
-      k:900
-    };
-
-    let value = values[piece.type];
-
-    return piece.color === 'w' ? value : -value;
-  }
-
-  function makeBestMove(){
-
-    if(game.game_over()) return;
-
-    const bestMove =
-    minimaxRoot(2, game, true);
-
-    game.move(bestMove);
-
-    board.position(game.fen());
-
-    updateStatus();
-  }
-
-  function onDragStart(source, piece){
-
-    if(game.game_over()) return false;
-
-    if(piece.search(/^b/) !== -1) return false;
-
-    if(game.turn() !== 'w') return false;
-  }
-
-  function onDrop(source, target){
-
-    const move = game.move({
-      from: source,
-      to: target,
-      promotion: 'q'
-    });
-
-    if(move === null){
-
-      return 'snapback';
-    }
-
-    updateStatus();
-
-    window.setTimeout(function(){
-
-      makeBestMove();
-
-    }, 300);
-  }
-
-  function onSnapEnd(){
-
-    board.position(game.fen());
-  }
-
-  function resetGame(){
-
-    game.reset();
-
-    board.start();
-
-    updateStatus();
-  }
-
-  function undoMove(){
-
-    game.undo();
-    game.undo();
-
-    board.position(game.fen());
-
-    updateStatus();
-  }
-
-  board = Chessboard('board',{
-
-    draggable:true,
-    position:'start',
-
-    onDragStart:onDragStart,
-    onDrop:onDrop,
-    onSnapEnd:onSnapEnd
-
-  });
-
-  updateStatus();
+const operators = [
+
+/* ===== ★6 ===== */
+
+{
+name:"Exusiai",
+role:"Sniper",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_103_angel_1.png"
+},
+
+{
+name:"SilverAsh",
+role:"Guard",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_172_svrash_1.png"
+},
+
+{
+name:"Surtr",
+role:"Guard",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_350_surtr_1.png"
+},
+
+{
+name:"Mudrock",
+role:"Defender",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_311_mudrok_1.png"
+},
+
+{
+name:"Bagpipe",
+role:"Vanguard",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_222_bpipe_1.png"
+},
+
+{
+name:"Skadi",
+role:"Guard",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_263_skadi_1.png"
+},
+
+{
+name:"Ch'en",
+role:"Guard",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_010_chen_1.png"
+},
+
+{
+name:"Kal'tsit",
+role:"Medic",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_003_kalts_1.png"
+},
+
+{
+name:"Eyjafjalla",
+role:"Caster",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_180_amgoat_1.png"
+},
+
+{
+name:"Blaze",
+role:"Guard",
+rarity:"6",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_017_huang_1.png"
+},
+
+/* ===== ★5 ===== */
+
+{
+name:"Texas",
+role:"Vanguard",
+rarity:"5",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_102_texas_1.png"
+},
+
+{
+name:"Amiya",
+role:"Caster",
+rarity:"5",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_002_amiya_1.png"
+},
+
+{
+name:"Lappland",
+role:"Guard",
+rarity:"5",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_140_whitew_1.png"
+},
+
+{
+name:"Specter",
+role:"Guard",
+rarity:"5",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_143_ghost_1.png"
+},
+
+{
+name:"Projekt Red",
+role:"Specialist",
+rarity:"5",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_144_red_1.png"
+},
+
+{
+name:"Blue Poison",
+role:"Sniper",
+rarity:"5",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_129_bluep_1.png"
+},
+
+/* ===== ★4 ===== */
+
+{
+name:"Cuora",
+role:"Defender",
+rarity:"4",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_150_snakek_1.png"
+},
+
+{
+name:"Myrtle",
+role:"Vanguard",
+rarity:"4",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_151_myrtle_1.png"
+},
+
+{
+name:"Shaw",
+role:"Specialist",
+rarity:"4",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_277_sqrrel_1.png"
+},
+
+{
+name:"Perfumer",
+role:"Medic",
+rarity:"4",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_181_flower_1.png"
+},
+
+{
+name:"Meteor",
+role:"Sniper",
+rarity:"4",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_126_shotst_1.png"
+},
+
+/* ===== ★3 ===== */
+
+{
+name:"Melantha",
+role:"Guard",
+rarity:"3",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_208_melan_1.png"
+},
+
+{
+name:"Kroos",
+role:"Sniper",
+rarity:"3",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_124_kroos_1.png"
+},
+
+{
+name:"Fang",
+role:"Vanguard",
+rarity:"3",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_123_fang_1.png"
+},
+
+{
+name:"Beagle",
+role:"Defender",
+rarity:"3",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_122_beagle_1.png"
+},
+
+{
+name:"Ansel",
+role:"Medic",
+rarity:"3",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_212_ansel_1.png"
+},
+
+/* ===== ★2 ===== */
+
+{
+name:"Yato",
+role:"Vanguard",
+rarity:"2",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_502_nblade_1.png"
+},
+
+{
+name:"Noir Corne",
+role:"Defender",
+rarity:"2",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_500_noirc_1.png"
+},
+
+{
+name:"Rangers",
+role:"Sniper",
+rarity:"2",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_503_rang_1.png"
+},
+
+{
+name:"Durin",
+role:"Caster",
+rarity:"2",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_504_durin_1.png"
+},
+
+{
+name:"12F",
+role:"Caster",
+rarity:"2",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_505_rcast_1.png"
+},
+
+/* ===== ★1 ===== */
+
+{
+name:"Lancet-2",
+role:"Medic",
+rarity:"1",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_285_medic2_1.png"
+},
+
+{
+name:"Castle-3",
+role:"Guard",
+rarity:"1",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_286_cast3_1.png"
+},
+
+{
+name:"THRM-EX",
+role:"Specialist",
+rarity:"1",
+image:"https://raw.githubusercontent.com/Aceship/Arknight-Images/main/characters/char_376_therex_1.png"
+}
+
+];
+
+const grid =
+document.getElementById("grid");
+
+function renderCards(data){
+
+grid.innerHTML = "";
+
+data.forEach(op=>{
+
+grid.innerHTML += `
+
+<div class="card">
+
+<img src="${op.image}" alt="${op.name}">
+
+<div class="content">
+
+<div class="name">
+${op.name}
+</div>
+
+<div class="role">
+${op.role}
+</div>
+
+<div class="rarity">
+${"★".repeat(op.rarity)}
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+renderCards(operators);
+
+function filterRarity(rarity,btn){
+
+document
+.querySelectorAll(".filter button")
+.forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+if(rarity === "all"){
+
+renderCards(operators);
+
+}else{
+
+const filtered =
+operators.filter(op=>
+op.rarity === rarity
+);
+
+renderCards(filtered);
+
+}
+
+}
+
+document
+.getElementById("search")
+.addEventListener("input",function(){
+
+const value =
+this.value.toLowerCase();
+
+const filtered =
+operators.filter(op=>
+
+op.name.toLowerCase()
+.includes(value)
+
+);
+
+renderCards(filtered);
+
+});
 
 </script>
 
